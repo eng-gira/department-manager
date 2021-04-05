@@ -33,13 +33,12 @@ Route::delete("/position/delete/{id}", "App\Http\Controllers\PositionController@
 
 Route::get("/admin", "App\Http\Controllers\UserController@admin");
 Route::get("/manager", "App\Http\Controllers\UserController@manager");
+Route::get("/listManagers", "App\Http\Controllers\UserController@listManagers");
 Route::get("/user/edit/{id}/{row_id}", "App\Http\Controllers\UserController@edit");
 Route::post("/user/update/{id}/{row_id}", "App\Http\Controllers\UserController@update");
 Route::delete("/user/delete/{id}", "App\Http\Controllers\UserController@delete");
 
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth'])->name('dashboard');
+Route::get('/dashboard', "App\Http\Controllers\UserController@dashboard")->name("dashboard");
 
 require __DIR__.'/auth.php';

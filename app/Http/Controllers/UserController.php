@@ -18,6 +18,14 @@ class UserController extends Controller
         $this->middleware('auth');
     }
 
+    public function dashboard()
+    {
+        // //debug
+        // echo "dashboard from user controller <br>";
+
+        return view("dashboard");
+    }
+
     public function admin()
     {
         if(!$this->manages()) return redirect("/");
@@ -25,9 +33,23 @@ class UserController extends Controller
         return view("admin.index", ["user_dept_pos" => DB::table("user_dept_pos")->paginate(10)]);
     }
 
+    public function listManagers()
+    {
+        if(!$this->manages())
+        {
+            return redirect("/dashboard")->with("error", "Unauthorized action.");
+        }
+        else
+        {
+            $managers = User::where("manager", "=", 1);
+            return view("admin.managers")->with("managers", $managers);
+        }
+    }
+
     public function manager()
     {
-        return view("manager.index", ["user_dept_pos" => DB::table("user_dept_pos")->paginate(10)]);    }
+        return view("manager.index", ["user_dept_pos" => DB::table("user_dept_pos")->paginate(10)]);
+    }
 
     public function edit($id)
     {
@@ -123,12 +145,13 @@ class UserController extends Controller
 
     public function delete($id)
     {
-        if($this->manages || auth()->user()->id === $id)
+        //only admin and the owner of an account can delete that account
+        if(auth()->user()->admin===1 || auth()->user()->id === $id)
         {
             $user = User::find(auth()->user()->id);
 
             //if not deleting own account
-            if($this->manages && auth()->user()->id !== $id)
+            if(auth()->user()->id !== $id)
             {
                 if($user->delete())
                 {

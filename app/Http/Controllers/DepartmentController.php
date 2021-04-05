@@ -24,13 +24,13 @@ class DepartmentController extends Controller
 
     public function create()
     {
-        if(!$this->manages()) return redirect("/");
+        if(!$this->manages()) return redirect("/dashboard")->with("error", "Unauthorized access");
         return view("department.create");
     }
 
     public function store(Request $request)
     {
-        if(!$this->manages()) return redirect("/");
+        if(!$this->manages()) return redirect("/dashboard")->with("error", "Unauthorized access");
 
         $validated = $request->validate(
             [
@@ -47,7 +47,7 @@ class DepartmentController extends Controller
 
     public function edit($id)
     {
-        if(!$this->manages()) return redirect("/");
+        if(!$this->manages()) return redirect("/dashboard")->with("error", "Unauthorized access");
 
         //send a 404 if id invalid
         Department::findOrFail($id); //exception not caught, send a 404 HTTP response to the client. 
@@ -57,7 +57,7 @@ class DepartmentController extends Controller
 
     public function update(Request $request, $id)
     {
-        if(!$this->manages()) return redirect("/");
+        if(!$this->manages()) return redirect("/dashboard")->with("error", "Unauthorized access");
 
         $validated = $request->validate(
             [
@@ -75,7 +75,7 @@ class DepartmentController extends Controller
 
     public function delete($id)
     {
-        if(!$this->manages()) return redirect("/");
+        if(auth()->user()->admin !== 1) return redirect("/dashboard")->with("error", "Unauthorized access");
 
         $dept = Department::findOrFail($id);
         $dept->delete();
