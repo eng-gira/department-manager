@@ -4,47 +4,77 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-use App\Models\Position;
 use App\Models\Department;
 use App\Models\User;
+
+use Illuminate\Support\Facades\DB;
 
 class DepartmentController extends Controller
 {
     //
-    public function index()
+    public function __construct()
     {
-        $depts = Department::all();
-        
-        return view("department.index");
+        $this->middleware('auth', ['except' => ['index']]);
+    }
+
+    public function index()
+    {        
+        return view("department.index", ["depts" => DB::table("departments")->paginate(10)]);
     }
 
     public function create()
     {
         if(!$this->manages()) return redirect("/");
+        return view("department.create");
     }
 
     public function store(Request $request)
     {
         if(!$this->manages()) return redirect("/");
+
+        $dept = new Department;
+        $dept->department = $request->input("department");
+        $dept->save();
+
+        return redirect("/department")->with("success", "Department Created");
     }
 
-    public function edit()
+    public function edit($id)
     {
         if(!$this->manages()) return redirect("/");
+
+        //send a 404 if id invalid
+        Department::findOrFail($id); //exception not caught, send a 404 HTTP response to the client. 
+
+        return view("department.edit")->with("id",$id);
     }
 
-    public function update(Request $request)
+    public function update(Request $request, $id)
     {
         if(!$this->manages()) return redirect("/");
+
+        $dept = Department::findOrFail($id); //exception not caught, send a 404 HTTP response to the client. 
+
+        $dept->department = $request->input("department");
+        $dept->save();
+
+        return redirect("/department")->with("success", "Department Updated");
     }
 
-    public function delete(Request $request)
+    public function delete($id)
     {
         if(!$this->manages()) return redirect("/");
+
+        $dept = Department::findOrFail($id);
+        $dept->delete();
+
+        return redirect("/department")->with("success", "Department Deleted");
     }
 
     private function manages()
     {
-        return auth()->manager===1 || auth()->admin===1;
+        $user = User::find(auth()->user()->id);
+
+        return $user->manager===1 || $user->admin===1;
     }
 }
