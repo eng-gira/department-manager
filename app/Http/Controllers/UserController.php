@@ -61,12 +61,20 @@ class UserController extends Controller
 
     public function manager()
     {
-        return view("manager.index", ["user_dept_pos" => DB::table("user_dept_pos")->paginate(10)]);
+        return view("manager.index", 
+            [
+                "user_dept_pos" => 
+                    DB::table("user_dept_pos")->paginate(10)
+            ]
+        );
     }
 
     public function edit($id)
     {
-        return view("user.edit");        
+        return auth()->user()->id === $id ?
+            view("user.edit") :
+            redirect("/dashboard")->with("error", "Unauthorized action")
+        ;
     }
 
     public function update(Request $request, $id, $row_id)
@@ -153,6 +161,10 @@ class UserController extends Controller
             return $user->manager===1 ? 
                 redirect("/manager")->with("success", "User status updated") : 
                 redirect("/admin")->with("success", "User status updated");
+        }
+        else
+        {
+            return redirect("/dashboard")->with("error", "Unauthorized action");
         }
     }
 
