@@ -2,6 +2,10 @@
 
 return [
 
+    //URL_PREFIX
+    "uPrefix" => env("URL_PREFIX", ""),
+
+
     /*
     |--------------------------------------------------------------------------
     | Application Name
