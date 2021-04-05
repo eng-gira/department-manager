@@ -34,6 +34,7 @@ Route::delete("/position/delete/{id}", "App\Http\Controllers\PositionController@
 Route::get("/admin", "App\Http\Controllers\UserController@admin");
 Route::get("/manager", "App\Http\Controllers\UserController@manager");
 Route::get("/listManagers", "App\Http\Controllers\UserController@listManagers");
+Route::get("/listUsers", "App\Http\Controllers\UserController@listUsers");
 Route::get("/user/edit/{id}/{row_id}", "App\Http\Controllers\UserController@edit");
 Route::post("/user/update/{id}/{row_id}", "App\Http\Controllers\UserController@update");
 Route::delete("/user/delete/{id}", "App\Http\Controllers\UserController@delete");

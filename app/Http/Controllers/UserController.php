@@ -42,8 +42,21 @@ class UserController extends Controller
         else
         {
             $managers = User::where("manager", "=", 1);
-            return view("admin.managers")->with("managers", $managers);
+            return view("managers")->with("managers", $managers);
         }
+    }
+
+    public function listUsers()
+    {
+        if(!$this->manages())
+        {
+            return redirect("/dashboard")->with("error", "Unauthorized action.");
+        }
+        else
+        {
+            $users = User::all();
+            return view("users")->with("users", $users);
+        }        
     }
 
     public function manager()
