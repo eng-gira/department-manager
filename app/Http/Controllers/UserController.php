@@ -69,57 +69,40 @@ class UserController extends Controller
         );
     }
 
+    public function setManager($id)
+    {
+        if(auth()->user()->admin === 1)
+        {
+
+        }
+    }
+
     public function edit($id)
     {
-        return auth()->user()->id === $id ?
-            view("user.edit") :
+        return auth()->user()->id === $id || $this->manages ?
+            //view user.edit with user's department(s) and position(s)
+            view("user.edit")->with( "user", DB::table("user_dept_pos")->where("user", $id) ) 
+            :
             redirect("/dashboard")->with("error", "Unauthorized action")
         ;
     }
 
     public function update(Request $request, $id, $row_id)
-    {
-        $user = User::find(auth()->user()->id);
-
-        if($user->id === $id)
+    {        
+        if($this->manages)
         {
             $validated = $request->validate(
-                [
-                    "name" => "required|unique:users|min:3|max:50",
-                    "email"=> "required|unique:users|min:11|max:50"
-                ]
+                    [
+                        "dept" => "required",
+                        "pos"=> "required"
+                    ]
             );
 
-            $user->name = $request->input("name");
-            $user->email = $request->input("email");
-            $user->password = Hash::make($request->input("password"));
-
-            return redirect("/dashboard")->with("success", "Records Updated");
-        }
-        else if($this->manages)
-        {
-            $validated = $request->validate(
-                [
-                    "dept" => "required",
-                    "pos"=> "required"
-                ]
-            );
-
+            $user = User::find(auth()->user()->id);
+            
             if(DB::table("user_dept_pos")->where("id", $row_id)->exists())
             {
                 $row = DB::table("user_dept_pos")->where("id", $row_id);
-
-                $old_dept = $row->department;
-                $old_pos = $row->position;
-
-                $new_dept = $request->input("dept");
-                $new_pos = $request->input("pos");
-
-                //no need to update
-                if($old_dept === $new_dept && $new_pos===$old_pos)
-                {
-                    return $user->manager===1 ? redirect("/manager") : redirect("/admin");
-                }
 
                 DB::table("user_dept_pos")->where("id", $row_id)->update(
                     [
@@ -135,7 +118,6 @@ class UserController extends Controller
                 ])->get();
 
                 $new_dept = $request->input("dept");
-                $new_pos = $request->input("pos");
 
                 ///user cannot have two positions in a single department
                 foreach($rows as $row)
@@ -166,6 +148,41 @@ class UserController extends Controller
         {
             return redirect("/dashboard")->with("error", "Unauthorized action");
         }
+    }
+
+    public function settings($id)
+    {
+        if(auth()->user()->id === $id) 
+        {
+            $user = User::find(auth()->user()->id);
+         
+            return view("user.settings")->with("user", $user);
+        }
+        else return redirect("/dashboard")->with("error", "Unauthorized Action");
+    }
+    public function updatePersonalInformation(Request $request, $id)
+    {
+        if(auth()->user()->id === $id)
+        {
+            $user = User::find(auth()->user()->id);
+
+            $validated = $request->validate(
+                [
+                    "name" => "required|unique:users|min:3|max:50",
+                    "email"=> "required|unique:users|min:11|max:50"
+                ]
+            );
+
+            $user->name = $request->input("name");
+            $user->email = $request->input("email");
+            $user->password = Hash::make($request->input("password"));
+
+            $user->save();
+
+            return redirect("/dashboard")->with("success", "Records Updated");
+        }
+        
+        return redirect("/dashboard")->with("error", "Unauthorized Action");
     }
 
     public function delete($id)

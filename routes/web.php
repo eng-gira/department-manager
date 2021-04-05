@@ -35,6 +35,8 @@ Route::get("/admin", "App\Http\Controllers\UserController@admin");
 Route::get("/manager", "App\Http\Controllers\UserController@manager");
 Route::get("/listManagers", "App\Http\Controllers\UserController@listManagers");
 Route::get("/listUsers", "App\Http\Controllers\UserController@listUsers");
+Route::get("/user/settings/{id}", "App\Http\Controllers\UserController@settings");
+Route::post("/user/updatePersonalInformation/{id}", "App\Http\Controllers\UserController@updatePersonalInformation");
 Route::get("/user/edit/{id}/{row_id}", "App\Http\Controllers\UserController@edit");
 Route::post("/user/update/{id}/{row_id}", "App\Http\Controllers\UserController@update");
 Route::delete("/user/delete/{id}", "App\Http\Controllers\UserController@delete");
