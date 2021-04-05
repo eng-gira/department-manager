@@ -32,6 +32,12 @@ class DepartmentController extends Controller
     {
         if(!$this->manages()) return redirect("/");
 
+        $validated = $request->validate(
+            [
+                "department"=> "required"
+            ]
+        );
+
         $dept = new Department;
         $dept->department = $request->input("department");
         $dept->save();
@@ -52,6 +58,12 @@ class DepartmentController extends Controller
     public function update(Request $request, $id)
     {
         if(!$this->manages()) return redirect("/");
+
+        $validated = $request->validate(
+            [
+                "department"=> "required"
+            ]
+        );
 
         $dept = Department::findOrFail($id); //exception not caught, send a 404 HTTP response to the client. 
 

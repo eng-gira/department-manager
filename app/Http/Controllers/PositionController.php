@@ -32,6 +32,12 @@ class PositionController extends Controller
     {
         if(!$this->manages()) return redirect("/");
 
+        $validated = $request->validate(
+            [
+                "position"=> "required"
+            ]
+        );
+
         $pos = new Position;
         $pos->position = $request->input("position");
         $pos->save();
@@ -52,6 +58,12 @@ class PositionController extends Controller
     public function update(Request $request, $id)
     {
         if(!$this->manages()) return redirect("/");
+
+        $validated = $request->validate(
+            [
+                "position"=> "required"
+            ]
+        );
 
         $pos = Position::findOrFail($id); //exception not caught, send a 404 HTTP response to the client. 
 
