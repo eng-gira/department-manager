@@ -20,7 +20,7 @@ Route::get("/", function () {
 Route::get("/department", "App\Http\Controllers\DepartmentController@index");
 Route::get("/department/{id}", "App\Http\Controllers\DepartmentController@single");
 Route::post("/department/saveBackgroundImage/{id}", "App\Http\Controllers\DepartmentController@saveBackgroundImage");
-Route::get("/department/create", "App\Http\Controllers\DepartmentController@create");
+Route::get("/d/create", "App\Http\Controllers\DepartmentController@create");
 Route::post("/department/store", "App\Http\Controllers\DepartmentController@store");
 Route::get("/department/edit/{id}", "App\Http\Controllers\DepartmentController@edit");
 Route::post("/department/update/{id}", "App\Http\Controllers\DepartmentController@update");

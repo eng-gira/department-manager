@@ -3,6 +3,9 @@
         <h4>Create a Department</h4>
     </x-slot>
 
+    <br>
+    <br>
+
     <form action="{{config('app.uPrefix') . '/department/store'}}" method="POST">
         @csrf
         Department name: <input type="text" name="department" required/>

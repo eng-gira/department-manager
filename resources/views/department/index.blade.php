@@ -23,5 +23,5 @@
         </table>
     @endif
 
-    <a class="btn btn-primary" href="{{config('app.uPrefix') . '/department/create'}}">Create a Department</a>
+    <a class="btn btn-primary" href="{{config('app.uPrefix') . '/d/create'}}">Create a Department</a>
 </x-app-layout>

@@ -1,6 +1,10 @@
 <x-app-layout>
     <x-slot name="header">
         <h4>Department: {{$dept->department}} </h4>
+
+        <!-- Department data -->
+        <h6> Created on: {{$createdOn}} </h6>
+        <h6> Users: {{$countUsersInDept}} </h6>
     </x-slot>
 
 
@@ -9,15 +13,15 @@
     <br>
     <br>
     <!-- Upload bg image form -->
-    @if($manages===1)
-        <form action="{{config('app.uPrefix') . '/department/saveBackgroundImage/' . $dept->id}}" method="POST">
+    @if($manages==1)
+        <form action="{{config('app.uPrefix') . '/department/saveBackgroundImage/' . $dept->id}}" method="POST"
+            enctype="multipart/form-data">
             @csrf
-            Background-Image Path: <input type="text" name="bg_image" required/>
+            Choose image: <input type="file" name="bg_image" required/>
+            <br>
+            <br>
+
             <button class="btn btn-secondary">Upload Image</button>
         </form>
     @endif
-
-    <!-- Department data -->
-    <h4> Created on: {{$createdOn}} </h4>
-    <h4> Users: {{$countUsersInDept}} </h4>
 </x-app-layout>

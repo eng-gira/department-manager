@@ -2,6 +2,9 @@
     <x-slot name="header">
         <h4>Create Position </h4>
     </x-slot>
+    
+    <br>
+    <br>
 
     <form action="{{config('app.uPrefix') . '/position/store'}}" method="POST">
         @csrf

@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Position;
 
 use Illuminate\Support\Facades\DB;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class DepartmentController extends Controller
 {
@@ -62,9 +63,6 @@ class DepartmentController extends Controller
     {
         $dept = Department::findOrFail($id);
 
-        /**
-         * @todo set background image
-         */
         $uploadedFileUrl = Cloudinary::upload($request->file("bg_image")->getRealPath())->getSecurePath();
         $dept->background_image_url = $uploadedFileUrl;
         $dept->save();
