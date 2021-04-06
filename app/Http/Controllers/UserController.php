@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\User;
+use App\Models\Department;
+use App\Models\Position;
 
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
@@ -23,16 +25,42 @@ class UserController extends Controller
         // //debug
         // echo "dashboard from user controller <br>";
 
-        return view("dashboard");
+        $users = User::all(); 
+        $userIdDataArr = []; //associative array pairing user's id and name
+        foreach($users as $u) $userIdDataArr[$u->id] = $u;
+
+        $departments = Department::all();
+        $deptIdNameArr = []; // associative array pairing dept's id and department
+        foreach($departments as $d) $deptIdNameArr[$d->id] = $d->department;
+
+        $positions = Position::all();
+        $posIdNameArr = []; // associative array pairing position's id and position
+        foreach($positions as $p) $posIdNameArr[$p->id] = $p->position;
+
+        /**
+         * @todo use pagination with user_dept
+         */
+
+
+        return $this->manages() ? 
+            view("dashboard")->with( 
+                [
+                    "manages" => 1,
+                    "admin" => auth()->user()->admin, 
+                    "user_dept" => DB::table("user_dept")->get(), 
+                    "userIdDataArr" => $userIdDataArr,
+                    "deptIdNameArr" => $deptIdNameArr, 
+                    "posIdNameArr" => $posIdNameArr,
+                    "user" => auth()->user()
+                ]
+            ) 
+            :
+            view("dashboard")->with(
+                [
+                    "manages" => 0
+                ]
+            );
     }
-
-    public function admin()
-    {
-        if(!$this->manages()) return redirect("/");
-
-        return view("admin.index", ["user_dept_pos" => DB::table("user_dept_pos")->paginate(10)]);
-    }
-
     public function listManagers()
     {
         if(!$this->manages())
@@ -41,8 +69,13 @@ class UserController extends Controller
         }
         else
         {
-            $managers = User::where("manager", "=", 1);
-            return view("managers")->with("managers", $managers);
+            $managers = User::where("manager", "=", 1)->where("admin", "<>", 1)->get();
+            return view("managers")->with(
+                [
+                    "managers" => $managers, 
+                    "admin" => auth()->user()->admin
+                ]
+            );
         }
     }
 
@@ -54,42 +87,75 @@ class UserController extends Controller
         }
         else
         {
-            $users = User::all();
-            return view("users")->with("users", $users);
+            $users = User::where("manager", "<>", 1)->where("admin", "<>", 1)->get();
+            return view("users")->with(
+                [
+                    "users" => $users,
+                    "admin" => auth()->user()->admin
+                ]
+            );
         }        
-    }
-
-    public function manager()
-    {
-        return view("manager.index", 
-            [
-                "user_dept_pos" => 
-                    DB::table("user_dept_pos")->paginate(10)
-            ]
-        );
     }
 
     public function setManager($id)
     {
+        // only the admin can set a user as a manager
         if(auth()->user()->admin === 1)
         {
+            $user = User::findOrFail($id);
+            $user->manager = 1;
+            if($user->save())
+            {
+                return redirect("/listManagers")->with("success", "User set as manager");
+            }
+            else
+            {
+                return redirect("/listManagers")->with("error", "User was not set as manager");    
+            }
 
+            return redirect("/dashboard")->with("error", "Unauthorized Action");
         }
+    }
+
+    public function unsetManager($id)
+    {
+        if(auth()->user()->admin === 1)
+        {
+            $user = User::findOrFail($id);
+            $user->manager = 0;
+            $user->save();
+            
+            return redirect("/listManagers");
+        }   
+
+        return redirect("/dashboard");
     }
 
     public function edit($id)
     {
-        return auth()->user()->id === $id || $this->manages ?
+        return auth()->user()->id === $id || $this->manages() ?
             //view user.edit with user's department(s) and position(s)
-            view("user.edit")->with( "user", DB::table("user_dept_pos")->where("user", $id) ) 
+            view("user.edit")->with( 
+                [
+                    "id" => $id,  
+                    "depts" => Department::all(), 
+                    "positions" => Position::all(), 
+                    "user" => User::findOrFail($id)
+                ]
+            ) 
             :
             redirect("/dashboard")->with("error", "Unauthorized action")
         ;
     }
 
-    public function update(Request $request, $id, $row_id)
-    {        
-        if($this->manages)
+    public function update(Request $request, $id)
+    {     
+        if(auth()->user()->admin === 0 && User::find($id)->admin===1) 
+        {         
+            return redirect("/dashboard");
+        }
+        
+        if($this->manages())
         {
             $validated = $request->validate(
                     [
@@ -98,51 +164,54 @@ class UserController extends Controller
                     ]
             );
 
-            $user = User::find(auth()->user()->id);
+            $user = User::find($id);
             
-            if(DB::table("user_dept_pos")->where("id", $row_id)->exists())
-            {
-                $row = DB::table("user_dept_pos")->where("id", $row_id);
+            // if(DB::table("user_dept_pos")->where("id", $row_id)->exists())
+            // {
+            //     $row = DB::table("user_dept_pos")->where("id", $row_id)->get();
 
-                DB::table("user_dept_pos")->where("id", $row_id)->update(
-                    [
-                        "dept"=>$request->input("dept"), 
-                        "pos"=>$request->input("pos")
-                    ]
-                );
-            }
-            else
-            {
-                $rows = DB::table("user_dept_pos")->where([
+            //     DB::table("user_dept_pos")->where("id", $row_id)->update(
+            //         [
+            //             "department"=>$request->input("dept"), 
+            //             "position"=>$request->input("pos")
+            //         ]
+            //     );
+            // }
+            // else
+            // {
+                $rows = DB::table("user_dept")->where([
                     ["user", "=", $id],
                 ])->get();
 
                 $new_dept = $request->input("dept");
 
-                ///user cannot have two positions in a single department
+                $found = 0;
                 foreach($rows as $row)
                 {
-                    if($row->value("department") == $new_dept)
+                    if($row->department == $new_dept)
                     {
-                        $message = "User already has position in the department";
-
-                        return $user->manager===1 ? 
-                            redirect("/manager")->with("error", $message) : 
-                            redirect("/admin")->with("error", $message);
+                        $found = 1;
                     }
                 }
 
-                DB::table("user_dept_pos")->insert(
-                    [
-                        "dept"=>$request->input("dept"), 
-                        "pos"=>$request->input("pos")
-                    ]
-                );
-            }
+                if($found === 0) 
+                {
+                    DB::table("user_dept")->insert(
+                        [
+                            "user"=>$id,
+                            "department"=>$request->input("dept")
+                        ]
+                    );
+                }
+
+                $user->position = $request->input("pos");
+                $user->save();
+
+            // }
 
             return $user->manager===1 ? 
-                redirect("/manager")->with("success", "User status updated") : 
-                redirect("/admin")->with("success", "User status updated");
+                redirect("/dashboard")->with("success", "User status updated") : 
+                redirect("/dashboard")->with("success", "User status updated");
         }
         else
         {
@@ -150,16 +219,21 @@ class UserController extends Controller
         }
     }
 
-    public function settings($id)
-    {
-        if(auth()->user()->id === $id) 
-        {
-            $user = User::find(auth()->user()->id);
+    // public function settings($id)
+    // {
+    //     if(auth()->user()->id === $id) 
+    //     {
+    //         $user = User::find(auth()->user()->id);
          
-            return view("user.settings")->with("user", $user);
-        }
-        else return redirect("/dashboard")->with("error", "Unauthorized Action");
-    }
+    //         return view("user.settings")->with(
+    //             [
+    //                 "user" => $user,
+    //                 "auth_id" => auth()->user()->id   
+    //             ]
+    //         );
+    //     }
+    //     else return redirect("/dashboard")->with("error", "Unauthorized Action");
+    // }
     public function updatePersonalInformation(Request $request, $id)
     {
         if(auth()->user()->id === $id)
@@ -168,8 +242,8 @@ class UserController extends Controller
 
             $validated = $request->validate(
                 [
-                    "name" => "required|unique:users|min:3|max:50",
-                    "email"=> "required|unique:users|min:11|max:50"
+                    "name" => "required|min:3",
+                    "email"=> "required|email"
                 ]
             );
 

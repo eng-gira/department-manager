@@ -50,9 +50,14 @@ class PositionController extends Controller
         if(!$this->manages()) return redirect("/dashboard")->with("error", "Unauthorized access");
 
         //send a 404 if id invalid
-        Position::findOrFail($id); //exception not caught, send a 404 HTTP response to the client. 
+        $pos = Position::findOrFail($id); //exception not caught, send a 404 HTTP response to the client. 
 
-        return view("position.edit")->with("id",$id);
+        return view("position.edit")->with(
+            [
+                "id" => $id, 
+                "pos" => $pos
+            ]
+        );
     }
 
     public function update(Request $request, $id)

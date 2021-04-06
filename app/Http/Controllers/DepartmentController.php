@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 
 use App\Models\Department;
 use App\Models\User;
+use App\Models\Position;
 
 use Illuminate\Support\Facades\DB;
 
@@ -20,6 +21,55 @@ class DepartmentController extends Controller
     public function index()
     {        
         return view("department.index", ["depts" => DB::table("departments")->paginate(10)]);
+    }
+
+    //show a single department's positions and users
+    public function single($id)
+    {
+        //check validity of id, and 404 if invalid.
+        $dept = Department::findOrFail($id);
+
+        $users = User::all(); 
+        $userIdNameArr = []; //associative array pairing user's id and name
+        foreach($users as $u) $userIdNameArr[$u->id] = $u->name;
+        
+
+        $positions = Position::all();
+        $posIdNameArr = []; // associative array pairing position's id and position
+        foreach($positions as $p) $posIdNameArr[$p->id] = $p->position;
+
+        $createdOn = explode(" ", auth()->user()->created_at)[0];
+        $date = explode("-", $createdOn);
+        $yyyy = $date[0];
+        $mm = $date[1];
+        $dd = $date[2];
+
+        $countUsersInDept = count(DB::table("user_dept")->where("department", $id)->get());
+
+        return view("department.single",
+            [
+                "dept" => $dept, 
+                "userIdNameArr" => $userIdNameArr, 
+                "posIdNameArr" => $posIdNameArr,
+                "createdOn" => $dd . "-" . $mm . "-" . $yyyy,
+                "countUsersInDept" => $countUsersInDept,
+                "manages" => $this->manages()
+            ]
+        );
+    }
+
+    public function saveBackgroundImage(Request $request, $id)
+    {
+        $dept = Department::findOrFail($id);
+
+        /**
+         * @todo set background image
+         */
+        $uploadedFileUrl = Cloudinary::upload($request->file("bg_image")->getRealPath())->getSecurePath();
+        $dept->background_image_url = $uploadedFileUrl;
+        $dept->save();
+        
+        return redirect("/department/$id");
     }
 
     public function create()
@@ -50,9 +100,14 @@ class DepartmentController extends Controller
         if(!$this->manages()) return redirect("/dashboard")->with("error", "Unauthorized access");
 
         //send a 404 if id invalid
-        Department::findOrFail($id); //exception not caught, send a 404 HTTP response to the client. 
+        $dept = Department::findOrFail($id); //exception not caught, send a 404 HTTP response to the client. 
 
-        return view("department.edit")->with("id",$id);
+        return view("department.edit")->with(
+            [
+                "id" => $id,
+                "dept" => $dept
+            ]
+        );
     }
 
     public function update(Request $request, $id)
