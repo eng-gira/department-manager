@@ -39,11 +39,14 @@
                         <th>User</th>
                         <th>Department</th>
                         <th>Position</th>
+                        @if($admin===1)
+                            <th></th>
+                        @endif
                     </tr>
                     @foreach($user_dept as $ud)
                         <tr>
                             <td>
-                                @if($userIdDataArr[$ud->user]->admin===1 && $admin===0) 
+                                @if($userIdDataArr[$ud->user]->admin===1 && $admin===0 || $manages===0) 
                                     <p> {{$userIdDataArr[$ud->user]->name}}</p>
                                 @else
                                     <a href="{{config('app.uPrefix') . '/user/edit/' . $ud->user}}">{{$userIdDataArr[$ud->user]->name}}</a>
@@ -51,6 +54,11 @@
                             </td>
                             <td><a href="{{config('app.uPrefix'). '/department/' . $ud->department}}"> {{$deptIdNameArr[$ud->department]}} </a></td>
                             <td>{{$posIdNameArr[$userIdDataArr[$ud->user]->position]}}</td>
+                            <td>
+                                @if($admin===1)
+                                    <a class="btn btn-danger" href="{{config('app.uPrefix'). '/user/deleteUserDeptConnection/' . $ud->id}}">Remove from deparment</a>
+                                @endif
+                            </td>
                         </tr>
                     @endforeach
                 </table>
@@ -62,7 +70,7 @@
         <hr>
         <br>
         <br>
-        @if($admin===0)
+        @if(($manages===1 && $admin===0) || $manages===0)
 
             <h4> Account Settings </h4>
             <br>

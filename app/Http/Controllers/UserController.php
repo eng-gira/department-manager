@@ -42,22 +42,15 @@ class UserController extends Controller
          */
 
 
-        return $this->manages() ? 
-            view("dashboard")->with( 
+        return view("dashboard")->with( 
                 [
-                    "manages" => 1,
+                    "manages" => intval($this->manages()),
                     "admin" => auth()->user()->admin, 
                     "user_dept" => DB::table("user_dept")->get(), 
                     "userIdDataArr" => $userIdDataArr,
                     "deptIdNameArr" => $deptIdNameArr, 
                     "posIdNameArr" => $posIdNameArr,
                     "user" => auth()->user()
-                ]
-            ) 
-            :
-            view("dashboard")->with(
-                [
-                    "manages" => 0
                 ]
             );
     }
@@ -128,6 +121,12 @@ class UserController extends Controller
             return redirect("/listManagers");
         }   
 
+        return redirect("/dashboard");
+    }
+
+    public function deleteUserDeptConnection($row_id)
+    {
+        if(auth()->user()->admin) DB::table("user_dept")->delete($row_id);
         return redirect("/dashboard");
     }
 

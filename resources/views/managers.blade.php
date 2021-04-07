@@ -21,7 +21,7 @@
                             <a href="{{config('app.uPrefix') . '/user/edit/' . $m->id}}"> Edit </a>
                         </td>
                         @if($admin===1)
-                            <td><a class="btn btn-warning" href="{{config('app.uPrefix') . '/user/unsetManager/' . $m->id}}">Unset Manager</a></td>
+                            <td><a class="btn btn-warning" href="{{config('app.uPrefix') . '/unsetManager/' . $m->id}}">Unset Manager</a></td>
                             <td><a class="btn btn-danger" href="{{config('app.uPrefix') . '/user/delete/' . $m->id}}">Delete Account</a></td>
                         @endif
                     </tr>

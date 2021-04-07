@@ -10,6 +10,9 @@ use App\Models\Position;
 
 use Illuminate\Support\Facades\DB;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
+use Illuminate\Auth\Events\Validated;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Support\Facades\Validator as FacadesValidator;
 
 class DepartmentController extends Controller
 {
@@ -21,7 +24,16 @@ class DepartmentController extends Controller
 
     public function index()
     {        
-        return view("department.index", ["depts" => DB::table("departments")->paginate(10)]);
+        $auth = User::find(auth()->user()->id);
+        $manages = $auth !== null ? $this->manages() : 0;
+
+        return view("department.index")->with(
+            [
+                "depts" => DB::table("departments")->paginate(10),
+                "manages" => intval($manages),
+                "admin" => auth()->user()->admin
+            ]
+        );
     }
 
     //show a single department's positions and users
@@ -39,6 +51,7 @@ class DepartmentController extends Controller
         $posIdNameArr = []; // associative array pairing position's id and position
         foreach($positions as $p) $posIdNameArr[$p->id] = $p->position;
 
+        //formatting the date
         $createdOn = explode(" ", auth()->user()->created_at)[0];
         $date = explode("-", $createdOn);
         $yyyy = $date[0];
@@ -61,8 +74,15 @@ class DepartmentController extends Controller
 
     public function saveBackgroundImage(Request $request, $id)
     {
+        $validated = $request->validate(
+            [
+                "bg_image" => "max:5000"
+            ]
+        );
+
         $dept = Department::findOrFail($id);
 
+        //using Cloudinary to upload photos
         $uploadedFileUrl = Cloudinary::upload($request->file("bg_image")->getRealPath())->getSecurePath();
         $dept->background_image_url = $uploadedFileUrl;
         $dept->save();

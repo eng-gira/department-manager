@@ -42,6 +42,7 @@ Route::post("/user/updatePersonalInformation/{id}", "App\Http\Controllers\UserCo
 Route::get("/user/edit/{id}", "App\Http\Controllers\UserController@edit");
 Route::post("/user/update/{id}", "App\Http\Controllers\UserController@update");
 Route::get("/user/delete/{id}", "App\Http\Controllers\UserController@delete");
+Route::get("/user/deleteUserDeptConnection/{id}", "App\Http\Controllers\UserController@deleteUserDeptConnection");
 
 
 Route::get('/dashboard', "App\Http\Controllers\UserController@dashboard")->name("dashboard");
