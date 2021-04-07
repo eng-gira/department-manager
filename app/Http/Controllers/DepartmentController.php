@@ -65,7 +65,7 @@ class DepartmentController extends Controller
                 "dept" => $dept, 
                 "userIdNameArr" => $userIdNameArr, 
                 "posIdNameArr" => $posIdNameArr,
-                "createdOn" => $dd . "-" . $mm . "-" . $yyyy,
+                "createdOn" => $dd . "." . $mm . "." . $yyyy,
                 "countUsersInDept" => $countUsersInDept,
                 "manages" => $this->manages()
             ]
