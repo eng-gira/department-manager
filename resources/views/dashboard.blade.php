@@ -61,6 +61,7 @@
                             </td>
                         </tr>
                     @endforeach
+                    {{$user_dept->links()}}
                 </table>
             @else
                 <h4> No user-department-position relationship exists </h4>

@@ -46,7 +46,7 @@ class UserController extends Controller
                 [
                     "manages" => intval($this->manages()),
                     "admin" => auth()->user()->admin, 
-                    "user_dept" => DB::table("user_dept")->get(), 
+                    "user_dept" => DB::table("user_dept")->paginate(5), 
                     "userIdDataArr" => $userIdDataArr,
                     "deptIdNameArr" => $deptIdNameArr, 
                     "posIdNameArr" => $posIdNameArr,
@@ -118,16 +118,20 @@ class UserController extends Controller
             $user->manager = 0;
             $user->save();
             
-            return redirect("/listManagers");
+            return redirect("/listManagers")->with("success", "Manager was uset");
         }   
 
-        return redirect("/dashboard");
+        return redirect("/dashboard")->with("error", "Failed to unset manager");
     }
 
     public function deleteUserDeptConnection($row_id)
     {
-        if(auth()->user()->admin) DB::table("user_dept")->delete($row_id);
-        return redirect("/dashboard");
+        if(auth()->user()->admin) 
+        {
+            DB::table("user_dept")->delete($row_id);
+            return redirect("/dashboard")->with("success", "User was removed from the department");
+        }
+        return redirect("/dashboard")->with("error", "Something went wrong.");
     }
 
     public function edit($id)

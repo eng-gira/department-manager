@@ -35,7 +35,9 @@
 
             <!-- Page Content -->
             <main>
-                {{ $slot }}
+                @include('inc.messages')
+
+                {{ $slot }}        
             </main>
         </div>
     </body>
