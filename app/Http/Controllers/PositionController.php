@@ -19,14 +19,15 @@ class PositionController extends Controller
 
     public function index()
     {        
-        $auth = User::find(auth()->user()->id);
+        $auth = User::find(auth()->user());
         $manages = $auth !== null ? $this->manages() : 0;
 
         return view("position.index")->with(
             [
                 "positions" => DB::table("positions")->paginate(10),
                 "manages" => intval($manages),
-                "admin" => auth()->user()->admin
+                "admin" => $auth!==null ? auth()->user()->admin : 0,
+                "auth" => $auth!==null
             ]
         );
     }
