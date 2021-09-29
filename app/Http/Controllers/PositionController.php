@@ -105,8 +105,9 @@ class PositionController extends Controller
 
     private function manages()
     {
-        $user = User::find(auth()->user()->id);
+        $auth = User::find(auth()->user());
+        $user = $auth !== null ? User::find(auth()->user()->id) : null;
 
-        return $user->manager===1 || $user->admin===1;
+        return $user === null ? 0 : ($user->manager===1 || $user->admin===1);
     }
 }

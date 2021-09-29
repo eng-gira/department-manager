@@ -71,14 +71,14 @@
         <hr>
         <br>
         <br>
-        @if(($manages===1 && $admin===0) || $manages===0)
+        @if($auth!==0 && $admin===0)
 
             <h4> Account Settings </h4>
             <br>
-            <!-- <form action="{{config('app.uPrefix') . '/user/updatePersonalInformation/' . $user->id}}" method="POST">
+            <!-- <form action="{{config('app.uPrefix') . '/user/updatePersonalInformation/' . $auth->id}}" method="POST">
                 @csrf
-                Name: <input type="text" value="{{$user->name}}" placeholder="{{$user->name}}" name="name"/>
-                Email: <input type="text" value="{{$user->email}}" placeholder="{{$user->email}}" name="email"/>
+                Name: <input type="text" value="{{$auth->name}}" placeholder="{{$auth->name}}" name="name"/>
+                Email: <input type="text" value="{{$auth->email}}" placeholder="{{$auth->email}}" name="email"/>
                 Password: <input type="password" name="password"/>
                 <br>
                 <br>
@@ -89,7 +89,7 @@
             <hr>
             <br> -->
 
-            <a class="btn btn-danger" href="{{config('app.uPrefix') . '/user/delete/' . $user->id}}"> Delete Account </a>
+            <a class="btn btn-danger" href="{{config('app.uPrefix') . '/user/delete/' . $auth->id}}"> Delete Account </a>
         @endif
     </div>
 

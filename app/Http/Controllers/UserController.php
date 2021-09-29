@@ -17,7 +17,7 @@ class UserController extends Controller
     //
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware('auth', ["except" => ["dashboard"]]);
     }
 
     public function dashboard()
@@ -37,6 +37,9 @@ class UserController extends Controller
         $posIdNameArr = []; // associative array pairing position's id and position
         foreach($positions as $p) $posIdNameArr[$p->id] = $p->position;
 
+
+        $auth = User::find(auth()->user());
+        
         /**
          * @todo use pagination with user_dept
          */
@@ -45,12 +48,12 @@ class UserController extends Controller
         return view("dashboard")->with( 
                 [
                     "manages" => intval($this->manages()),
-                    "admin" => auth()->user()->admin, 
+                    "admin" => $auth !== null ? intval(auth()->user()->admin) : 0, 
                     "user_dept" => DB::table("user_dept")->paginate(5), 
                     "userIdDataArr" => $userIdDataArr,
                     "deptIdNameArr" => $deptIdNameArr, 
                     "posIdNameArr" => $posIdNameArr,
-                    "user" => auth()->user()
+                    "auth" => $auth !== null ? auth()->user() : 0, 
                 ]
             );
     }
@@ -295,8 +298,9 @@ class UserController extends Controller
 
     private function manages()
     {
-        $user = User::find(auth()->user()->id);
+        $auth = User::find(auth()->user());
+        $user = $auth !== null ? User::find(auth()->user()->id) : null;
 
-        return $user->manager===1 || $user->admin===1;
+        return $user === null ? 0 : ($user->manager===1 || $user->admin===1);
     }
 }

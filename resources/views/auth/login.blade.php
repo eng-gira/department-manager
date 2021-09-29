@@ -52,5 +52,6 @@
                 </x-button>
             </div>
         </form>
+        <a href="/DepartmentManager/public/register"> Register </a>
     </x-auth-card>
 </x-guest-layout>

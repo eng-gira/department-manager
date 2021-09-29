@@ -19,7 +19,7 @@ class DepartmentController extends Controller
     //
     public function __construct()
     {
-        $this->middleware('auth', ['except' => ['index']]);
+        $this->middleware('auth', ['except' => ["index", "single"]]);
     }
 
     public function index()
@@ -53,7 +53,7 @@ class DepartmentController extends Controller
         foreach($positions as $p) $posIdNameArr[$p->id] = $p->position;
 
         //formatting the date
-        $createdOn = explode(" ", auth()->user()->created_at)[0];
+        $createdOn = explode(" ", $dept->created_at)[0];
         $date = explode("-", $createdOn);
         $yyyy = $date[0];
         $mm = $date[1];
@@ -159,9 +159,10 @@ class DepartmentController extends Controller
 
     private function manages()
     {
-        $user = User::find(auth()->user()->id);
+        $auth = User::find(auth()->user());
+        $user = $auth !== null ? User::find(auth()->user()->id) : null;
 
-        return $user->manager===1 || $user->admin===1;
+        return $user === null ? 0 : ($user->manager===1 || $user->admin===1);
     }
     
 }

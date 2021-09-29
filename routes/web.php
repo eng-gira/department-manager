@@ -13,9 +13,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get("/", function () {
-    return view('welcome');
-});
+Route::get("/", "App\Http\Controllers\UserController@dashboard");
+Route::get('/dashboard', "App\Http\Controllers\UserController@dashboard")->name("dashboard");
 
 Route::get("/department", "App\Http\Controllers\DepartmentController@index");
 Route::get("/department/{id}", "App\Http\Controllers\DepartmentController@single");
@@ -44,7 +43,5 @@ Route::post("/user/update/{id}", "App\Http\Controllers\UserController@update");
 Route::get("/user/delete/{id}", "App\Http\Controllers\UserController@delete");
 Route::get("/user/deleteUserDeptConnection/{id}", "App\Http\Controllers\UserController@deleteUserDeptConnection");
 
-
-Route::get('/dashboard', "App\Http\Controllers\UserController@dashboard")->name("dashboard");
 
 require __DIR__.'/auth.php';
