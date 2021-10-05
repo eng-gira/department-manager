@@ -56,7 +56,7 @@
                             <td>{{$posIdNameArr[$userIdDataArr[$ud->user]->position]}}</td>
                             <td>
                                 @if($admin===1)
-                                    <a class="btn btn-danger" href="{{config('app.uPrefix'). '/user/deleteUserDeptConnection/' . $ud->id}}">Remove from deparment</a>
+                                    <a class="btn btn-danger" href="{{config('app.uPrefix'). '/user/deleteUserDeptConnection/' . $ud->id}}">Remove from department</a>
                                 @endif
                             </td>
                         </tr>
