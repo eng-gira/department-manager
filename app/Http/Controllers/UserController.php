@@ -156,15 +156,16 @@ class UserController extends Controller
 
     public function update(Request $request, $id)
     {     
-        //debug
-        echo "arrived";
-        exit;
 
         //
         if(auth()->user()->admin === 0 && User::find($id)->admin===1) 
         {         
             return redirect("/dashboard");
         }
+        
+        //debug
+        echo "arrived";
+        exit;
         
         if($this->manages())
         {
