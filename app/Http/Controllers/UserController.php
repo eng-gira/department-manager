@@ -165,7 +165,6 @@ class UserController extends Controller
 
         //debug
         echo "arrived this->manages(): " . $this->manages() ? "true" : "false";
-        exit;
                 
         if($this->manages())
         {
@@ -176,6 +175,9 @@ class UserController extends Controller
                     ]
             );
 
+            //debug
+            echo "arrived 4 ";
+            exit;
             $user = User::find($id);
             
             // if(DB::table("user_dept_pos")->where("id", $row_id)->exists())
