@@ -162,11 +162,11 @@ class UserController extends Controller
         {         
             return redirect("/dashboard");
         }
-        
+
         //debug
-        echo "arrived";
+        echo "arrived this->manages(): " . $this->manages() ? "true" : "false";
         exit;
-        
+                
         if($this->manages())
         {
             $validated = $request->validate(
