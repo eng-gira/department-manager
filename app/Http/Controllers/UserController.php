@@ -209,6 +209,7 @@ class UserController extends Controller
                         $found = 1;
                     }
                 }
+                echo "arrived 6 <br>";
 
                 if($found === 0) 
                 {
@@ -220,12 +221,12 @@ class UserController extends Controller
                     );
                 }
 
-                echo "arrived 6 <br>";
+                echo "arrived 7 <br>";
 
                 $user->position = $request->input("pos");
                 $user->save();
 
-                echo "arrived 7<br>";
+                echo "arrived 8<br>";
 
 
             // }
