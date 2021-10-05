@@ -176,8 +176,8 @@ class UserController extends Controller
             );
 
             //debug
-            echo "arrived 4 ";
-            exit;
+            echo "arrived 4 <br>";
+
             $user = User::find($id);
             
             // if(DB::table("user_dept_pos")->where("id", $row_id)->exists())
@@ -196,6 +196,8 @@ class UserController extends Controller
                 $rows = DB::table("user_dept")->where([
                     ["user", "=", $id],
                 ])->get();
+
+                 echo "arrived 5 <br>";
 
                 $new_dept = $request->input("dept");
 
@@ -218,8 +220,13 @@ class UserController extends Controller
                     );
                 }
 
+                echo "arrived 6 <br>";
+
                 $user->position = $request->input("pos");
                 $user->save();
+
+                echo "arrived 7<br>";
+
 
             // }
 
