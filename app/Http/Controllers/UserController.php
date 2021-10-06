@@ -209,7 +209,7 @@ class UserController extends Controller
                         $found = 1;
                     }
                 }
-                echo "arrived 6 & dept = $new_dept & user id is $id <br>";
+                echo "(2021-10-06 2:35 AM) arrived 6 & dept = $new_dept & user id is $id <br>";
 
                 if($found === 0) 
                 {
