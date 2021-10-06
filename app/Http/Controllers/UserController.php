@@ -213,12 +213,16 @@ class UserController extends Controller
 
                 if($found === 0) 
                 {
-                    DB::table("user_dept")->insert(
-                        [
-                            "user"=>$id,
-                            "department"=>$new_dept
-                        ]
-                    );
+                    // // Caused 500 Server Error in production but nothing in Dev! (2021-10-05)
+                    // DB::table("user_dept")->insert(
+                    //     [
+                    //         "user"=>$id,
+                    //         "department"=>$new_dept
+                    //     ]
+                    // );
+
+                    //trying an alternative (2021-10-05)
+                    DB::insert('insert into user_dept (user, department) values (?, ?)', [$id, $new_dept]);
                 }
 
                 echo "arrived 7 <br>";
