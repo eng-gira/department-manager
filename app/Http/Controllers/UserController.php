@@ -209,14 +209,14 @@ class UserController extends Controller
                         $found = 1;
                     }
                 }
-                echo "arrived 6 <br>";
+                echo "arrived 6 & dept = $new_dept & user id is $id <br>";
 
                 if($found === 0) 
                 {
                     DB::table("user_dept")->insert(
                         [
-                            "user"=>intval($id),
-                            "department"=>intval($request->input("dept"))
+                            "user"=>$id,
+                            "department"=>$request->input("dept")
                         ]
                     );
                 }
