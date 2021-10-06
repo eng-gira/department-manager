@@ -216,7 +216,7 @@ class UserController extends Controller
                     DB::table("user_dept")->insert(
                         [
                             "user"=>$id,
-                            "department"=>$request->input("dept")
+                            "department"=>$new_dept
                         ]
                     );
                 }
