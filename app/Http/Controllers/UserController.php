@@ -197,7 +197,7 @@ class UserController extends Controller
                     ["user", "=", $id],
                 ])->get();
 
-                 echo "arrived 5 <br>";
+                 echo "arrived 5 and count rows = " . count($rows) . " <br>";
 
                 $new_dept = $request->input("dept");
 
@@ -209,9 +209,9 @@ class UserController extends Controller
                         $found = 1;
                     }
                 }
-                echo "(2021-10-06 2:35 AM) arrived 6 & dept = $new_dept & user id is $id <br>";
+                echo "arrived 6 & dept = $new_dept & user id is $id <br>";
 
-                if($found === 0) 
+                if($found == 0) 
                 {
                     // // Caused 500 Server Error in production but nothing in Dev! (2021-10-05)
                     // DB::table("user_dept")->insert(
@@ -221,7 +221,7 @@ class UserController extends Controller
                     //     ]
                     // );
 
-                    //trying an alternative (2021-10-05)
+                    // Alternative: also caused 500 Server Error in production but nothing in Dev! (2021-10-05)
                     DB::insert('insert into user_dept (user, department) values (?, ?)', [$id, $new_dept]);
                 }
 
