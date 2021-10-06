@@ -211,18 +211,18 @@ class UserController extends Controller
                 }
                 echo "arrived 6 & dept = $new_dept & user id is $id <br>";
 
-                if($found == 0) 
+                if($found === 0) 
                 {
-                    // // Caused 500 Server Error in production but nothing in Dev! (2021-10-05)
-                    // DB::table("user_dept")->insert(
-                    //     [
-                    //         "user"=>$id,
-                    //         "department"=>$new_dept
-                    //     ]
-                    // );
+                    // Caused 500 Server Error in production but nothing in Dev! (2021-10-05)
+                    DB::table("user_dept")->insert(
+                        [
+                            "user"=>$id,
+                            "department"=>$new_dept
+                        ]
+                    );
 
-                    // Alternative: also caused 500 Server Error in production but nothing in Dev! (2021-10-05)
-                    DB::insert('insert into user_dept (user, department) values (?, ?)', [$id, $new_dept]);
+                    // // Alternative: also caused 500 Server Error in production but nothing in Dev! (2021-10-05)
+                    // DB::insert('insert into user_dept (user, department) values (?, ?)', [$id, $new_dept]);
                 }
 
                 echo "arrived 7 <br>";
