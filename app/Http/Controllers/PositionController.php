@@ -50,6 +50,10 @@ class PositionController extends Controller
 
         $pos = new Position;
         $pos->position = $request->input("position");
+        
+        //debug
+        echo "Next is save <br>";
+
         $pos->save();
 
         return redirect("/position")->with("success", "Position Created");
