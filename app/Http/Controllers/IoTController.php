@@ -10,8 +10,30 @@ class IoTController extends Controller
     //
     public function index()
     {
-        $data = DB::table("iot")->get();
+        $dataFromDB = DB::table("iot")->get();
+        $keys = [];
+        $vals = [];
+        $data = [];
 
+        foreach($dataFromDB as $k=>$v)
+        {
+            if($k=="DataKey")
+                $keys[count($keys)] = $v;
+
+            $vals[count($vals)] = $v;
+        }
+
+        if(count($keys) != count($vals))
+        {
+            $data = "An Error occurred";
+        }   
+        else
+        {
+            for($i=0; $i < count($keys); $i++)
+            {
+                $data[$keys[$i]] = $vals[$i];
+            }
+        }
         return view("iot.index")->with(["data" => $data]);
     }
 
