@@ -10,7 +10,7 @@ class IoTController extends Controller
     //
     public function index()
     {
-        $data = DB::table("iot")->get();
+        $data = DB::select('select * from iot');
 
         return view("iot.index")->with(["data" => $data]);
     }
