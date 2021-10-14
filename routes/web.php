@@ -44,4 +44,8 @@ Route::get("/user/delete/{id}", "App\Http\Controllers\UserController@delete");
 Route::get("/user/deleteUserDeptConnection/{id}", "App\Http\Controllers\UserController@deleteUserDeptConnection");
 
 
+Route::get("/iot", "App\Http\Controllers\IoTController@index");
+Route::post("/iot/store", "App\Http\Controllers\IoTController@store");
+
+
 require __DIR__.'/auth.php';
