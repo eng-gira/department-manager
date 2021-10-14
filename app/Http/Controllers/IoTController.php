@@ -12,7 +12,7 @@ class IoTController extends Controller
     {
         $data = DB::table("iot")->get();
 
-        return view("iot.index");
+        return view("iot.index")->with(["data" => $data]);
     }
 
     public function store()
