@@ -14,7 +14,7 @@ class IoTController extends Controller
         $keys = [];
         $vals = [];
         $data = [];
-
+        var_dump($dataFromDB);
         foreach($dataFromDB as $k=>$v)
         {
             if($k=="dataKey")
