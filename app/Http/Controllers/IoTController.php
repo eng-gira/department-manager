@@ -10,7 +10,7 @@ class IoTController extends Controller
     //
     public function index()
     {
-        $dataFromDB = DB::select("select * from iot");
+        $dataFromDB = DB::table("iot")->get();
         $keys = [];
         $vals = [];
         $data = [];
