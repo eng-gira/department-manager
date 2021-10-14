@@ -1,16 +1,21 @@
-<table class="table">
-    <tr>
-        <th>Key</th>
-        <th>Value</th>
-    </tr>
-    @foreach($data as $k=>$v)
+
+@if(is_array($data))
+    <table class="table">
         <tr>
-            <td>
-                {{$k}}
-            </td>
-            <td>
-                {{$v}}
-            </td>
+            <th>Key</th>
+            <th>Value</th>
         </tr>
-    @endforeach
-</table>
+        @foreach($data as $k=>$v)
+            <tr>
+                <td>
+                    {{$k}}
+                </td>
+                <td>
+                    {{$v}}
+                </td>
+            </tr>
+        @endforeach
+    </table>
+@else
+    {{$data}}
+@endif
