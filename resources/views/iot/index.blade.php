@@ -4,5 +4,10 @@
     </x-slot>
     <div class="container">
         {{$data}}
+
+        @foreach($data as $k=>$v)
+            {{$k}}
+            {{$v}}
+        @endforeach
     </div>
 </x-app-layout>
