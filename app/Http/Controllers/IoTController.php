@@ -17,7 +17,7 @@ class IoTController extends Controller
 
         foreach($dataFromDB as $k=>$v)
         {
-            if($k=="DataKey")
+            if($k=="dataKey")
                 $keys[count($keys)] = $v;
 
             $vals[count($vals)] = $v;
