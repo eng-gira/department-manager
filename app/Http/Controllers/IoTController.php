@@ -10,12 +10,12 @@ class IoTController extends Controller
     //
     public function index()
     {
-        $dataFromDB = DB::table("iot")->get();
+        $dataFromDB = json_encode(DB::table("iot")->get());
         $keys = [];
         $vals = [];
         $data = [];
         var_dump($dataFromDB);
-        foreach($dataFromDB as $k=>$v)
+        foreach(json_decode($dataFromDB) as $k=>$v)
         {
             if($k=="dataKey")
             {
