@@ -20,7 +20,8 @@ class IoTController extends Controller
             if($k=="dataKey")
                 $keys[count($keys)] = $v;
 
-            $vals[count($vals)] = $v;
+            else
+                $vals[count($vals)] = $v;
         }
 
         if(count($keys) != count($vals))
